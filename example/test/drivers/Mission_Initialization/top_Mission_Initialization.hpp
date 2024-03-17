@@ -70,9 +70,19 @@ class top_Mission_Initialization : public Coupled {
             addCoupling(comp_o_start_mission->report_port, decider->report_port);
             addCoupling(comp_o_update_gcs->report_port, decider->report_port);
 
+            addCoupling(gen_i_start_supervisor->finished_generating, decider->finished_executing_notification);
+            addCoupling(gen_i_aircraft_state->finished_generating, decider->finished_executing_notification);
+            addCoupling(gen_i_perception_status->finished_generating, decider->finished_executing_notification);
 
+            ptr = decider;
 		}
 
+    void callback()
+    {
+      ptr->execute_test_decision();
+    }
+  private:
+    std::shared_ptr<Decider> ptr;
 };
 
 #endif //top_Mission_Initialization_TD

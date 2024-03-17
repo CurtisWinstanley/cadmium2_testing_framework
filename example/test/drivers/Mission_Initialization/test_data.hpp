@@ -72,11 +72,11 @@ std::map<int, std::map<std::string, std::vector<std::tuple<int, VariantType>>>> 
     o_set_mission_monitor_status_3_eo.push_back(std::make_tuple(4, uint8_t(1)));
     eo3["o_set_mission_monitor_status"] = o_set_mission_monitor_status_3_eo;
     std::vector<std::tuple<int, VariantType>> o_start_mission_3_eo; 
-    o_start_mission_3_eo.push_back(std::make_tuple(6, int(1)));
+    o_start_mission_3_eo.push_back(std::make_tuple(6, int(123)));
     eo3["o_start_mission"] = o_start_mission_3_eo;
     std::vector<std::tuple<int, VariantType>> o_update_gcs_3_eo; 
     o_update_gcs_3_eo.push_back(std::make_tuple(2, message_update_gcs_t("The perceptions system is ready for operation!", 1)));
-    o_update_gcs_3_eo.push_back(std::make_tuple(5, message_update_gcs_t("Starting Mission in air!", 6)));
+    o_update_gcs_3_eo.push_back(std::make_tuple(5, message_update_gcs_t("Starting Mission in air!", 1)));
     eo3["o_update_gcs"] = o_update_gcs_3_eo;
 
     std::map<int, std::map<std::string, std::vector<std::tuple<int, VariantType>>>> comparator_data;

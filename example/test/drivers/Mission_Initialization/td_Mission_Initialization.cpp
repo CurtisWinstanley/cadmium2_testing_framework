@@ -50,11 +50,11 @@ int main() {
 		auto rootCoordinator = cadmium::RootCoordinator(td);
 		auto logger = std::make_shared<cadmium::CSVLogger>(log_file_dir+ std::string("/") +log_file_name, ";"); //initialize logger
 		rootCoordinator.setLogger(logger);
-
 		auto start = hclock::now(); //to measure simulation execution time
 
 		rootCoordinator.start(); //start the coordinator to begin simulation
 		rootCoordinator.simulate(std::numeric_limits<double>::infinity());
+		td->callback();
 		rootCoordinator.stop();
 
 		auto elapsed = std::chrono::duration_cast<std::chrono::duration<double, std::ratio<1>>>(hclock::now() - start).count();
