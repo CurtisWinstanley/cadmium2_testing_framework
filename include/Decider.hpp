@@ -34,10 +34,13 @@ class Decider: public Atomic<Decider_State> {
     public:
 
 		Port<comparator_report_struct> report_port;
+		Port<bool> finished_executing_notification;
 
 		explicit Decider(const std::string& id, std::map<std::string, std::vector<std::string>> tp, int n, std::string lf): Atomic<Decider_State>(id, Decider_State()) {
 			
 			report_port = addInPort<comparator_report_struct>("report_port");
+			finished_executing_notification = addInPort<bool>("finished_executing_notification");
+
 			test_paths = tp;
 			num_of_conditions = n;
 			test_conditions.assign(num_of_conditions, false);
@@ -65,6 +68,27 @@ class Decider: public Atomic<Decider_State> {
 			s.clock += e;
 
 			bool received_report = !report_port->empty(); //Port flags here
+			// bool received_finished_executing_notification = !finished_executing_notification->empty(); //Port flags here
+			
+			// //New condition for making a decision
+			// if(received_finished_executing_notification)
+			// {
+			// 	std::vector<bool> notifications;
+			// 	notifications = finished_executing_notification->getBag();
+
+			// 	generator_completion_counter += notifications.size();
+			// 	if(generator_completion_counter == number_of_generators)
+			// 	{
+			// 		make_output_decision(test_conditions);
+			// 		for (const auto& p : test_paths) {
+			// 			std::string model_name = p.first;
+			// 			std::vector<std::string> path = p.second;
+			// 			make_path_decision(log_file, model_name, path);
+			// 		}
+			// 	}
+			// 	s.sigma = std::numeric_limits<double>::infinity(); 
+			// 	return;
+			// }
 
 			std::vector<comparator_report_struct> reports;
 
@@ -110,16 +134,27 @@ class Decider: public Atomic<Decider_State> {
 			}
 			// This checks to see if we are finished waiting for inputs by seeing if we are over the anticipated condition number
 			// This could be improved by executing a callback at the end of the sim
-			if(anticipated_condition > test_conditions.size())
-			{
-				make_output_decision(test_conditions);
-				for (const auto& p : test_paths) {
-					std::string model_name = p.first;
-					std::vector<std::string> path = p.second;
-					make_path_decision(log_file, model_name, path);
-				}
-			}
+			// if(anticipated_condition > test_conditions.size())
+			// {
+			// 	make_output_decision(test_conditions);
+			// 	for (const auto& p : test_paths) {
+			// 		std::string model_name = p.first;
+			// 		std::vector<std::string> path = p.second;
+			// 		make_path_decision(log_file, model_name, path);
+			// 	}
+			// }
 			s.sigma = std::numeric_limits<double>::infinity(); 
+			return;
+		}
+
+		void execute_test_decision()
+		{
+			make_output_decision(test_conditions);
+			for (const auto& p : test_paths) {
+				std::string model_name = p.first;
+				std::vector<std::string> path = p.second;
+				make_path_decision(log_file, model_name, path);
+			}
 			return;
 		}
 
@@ -135,6 +170,10 @@ class Decider: public Atomic<Decider_State> {
 
     
     private:
+		mutable int generator_completion_counter = 0;
+
+		mutable int number_of_generators = 3;
+
 		mutable int anticipated_condition = 1;
 
         mutable int num_of_conditions;
