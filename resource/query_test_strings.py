@@ -373,8 +373,40 @@ test_String_8 = """### Test Case 1: Mission Already Started
 #### State Transition Path:
 - `{IDLE, MISSION_STATUS, CHECK_AUTONOMY, CHECK_PERCEPTION_SYSTEM, OUTPUT_PERCEPTION_STATUS, REQUEST_AIRCRAFT_STATE, CHECK_AIRCRAFT_STATE, OUTPUT_TAKEOFF_POSITION, START_MISSION, IDLE}`"""
 
+#Parser problem FIXME:
+test_string_9 = """### Test Case 1: Mission Already Started
 
+#### Input Data:
+- `Input Data: {"i_start_supervisor{(1), [{'autonomy_armed': 0, 'mission_already_started': 1, 'mission_number': 42}]}"}`
 
+#### Expected Outputs:
+- `Expected Outputs: {}`
+
+#### State Transition Path:
+- `State Transition Path: {IDLE, MISSION_STATUS, RESUME_MISSION, IDLE}`
+
+### Test Case 2: Mission Not Started, Autonomy Not Armed
+
+#### Input Data:
+- `Input Data: {"i_start_supervisor{(1), [{'autonomy_armed': 0, 'mission_already_started': 0, 'mission_number': 101}]}"}`
+
+#### Expected Outputs:
+- `Expected Outputs: {}`
+
+#### State Transition Path:
+- `State Transition Path: {IDLE, MISSION_STATUS, CHECK_AUTONOMY, IDLE}`
+
+### Test Case 3: Mission Not Started, Autonomy Armed, Perception System Healthy, Aircraft Height Above 10
+
+#### Input Data:
+- `Input Data: {"i_start_supervisor{(1), [{'autonomy_armed': 1, 'mission_already_started': 0, 'mission_number': 202}]}, "i_perception_status{(2), [true]}, "i_aircraft_state{(3), [{'gps_time': 162342.0, 'lat': 34.0219, 'lon': -118.4814, 'alt_AGL': 15.0, 'alt_MSL': 500.0, 'hdg_Deg': 90.0, 'vel_Kts': 120.0}]}"}`
+
+#### Expected Outputs:
+- `Expected Outputs: {"o_request_perception_status{(1), [true]}, "o_update_gcs{(2), ['The perceptions system is ready for operation!', 1]}, "o_request_aircraft_state{(3), [true]}, 
+"o_set_mission_monitor_status{(4), [1]}, "o_update_gcs{(5), ['Starting Mission in air!', 1]}, "o_start_mission{(6), [202]}"}`
+
+#### State Transition Path:
+- `State Transition Path: {IDLE, MISSION_STATUS, CHECK_AUTONOMY, CHECK_PERCEPTION_SYSTEM, OUTPUT_PERCEPTION_STATUS, REQUEST_AIRCRAFT_STATE, CHECK_AIRCRAFT_STATE, OUTPUT_TAKEOFF_POSITION, START_MISSION, IDLE}`"""
 
 
 

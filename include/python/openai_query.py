@@ -8,7 +8,7 @@ import ast
 #**************************************************************************************************#
 
 
-def query_gpt():
+def query_gpt(model_description):
 
     # Ensure this environment variable is set in your OS
     # key = os.getenv('OPENAI_API_KEY')
@@ -16,8 +16,6 @@ def query_gpt():
     # if key is None:
     #     raise Exception("The OPENAI_API_KEY environment variable is not set.")
 
-    with open('mission_init12.json', 'r') as file:
-        model_description = file.read()
     #-----------------------------GPT START
     #Now 'model_description' variable contains the text from the file
     #print(model_description)

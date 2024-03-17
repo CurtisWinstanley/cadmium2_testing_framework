@@ -197,6 +197,9 @@ def generate_tests():
     #now lets parse our JSON and get the input_ports and output_ports
     input_ports, output_ports = parse_model_json(model_json)
 
+    with open(model_json, 'r') as file:
+        model_description = file.read()
+
     #now get any extra constructor arguments that may be important
     model_args = model_args_str.split(';') #FIXME:
     #print("SIZE--------------------------------------" + str(len(model_args)))
@@ -212,8 +215,8 @@ def generate_tests():
 
     #Now we must check if the user wants chatgpt to generate some test cases or not
     if(gpt_flag ==1):
-        #gpt_response = openai_query.query_gpt() #get the response from chat gpt
-        test_data_writer.write_test_data(test_str, input_ports, output_ports, model_name, num_of_tests, test_driver_directory) #create the test cases
+        gpt_response = openai_query.query_gpt(model_description) #get the response from chat gpt
+        test_data_writer.write_test_data(gpt_response, input_ports, output_ports, model_name, num_of_tests, test_driver_directory) #create the test cases
     else:
         test_data_writer.write_test_data("", input_ports, output_ports, model_name, num_of_tests, test_driver_directory)
 
