@@ -1,0 +1,52 @@
+This is a tabular description of a DEVS Atomic model:
+
+Atomic Model Name: My_Model
+			
+	|States list:			|	|State Variables:Name; Type			|	|Input Port Names; Type				|	|Output Port Names; Type		|	|State Transitions: Current State;Event;Next State;Action																											|
+	|-------------------------------|	|-----------------------------------------------|	|-----------------------------------------------|	|---------------------------------------|	|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+	|IDLE				|	|mission_data; message_start_supervisor_t	|	|i_aircraft_state; message_aircraft_state_t	|	|o_request_perception_status; bool	|	|IDLE; i_start_supervisor.received; MISSION_STATUS; mission_data = i_start_supervisor.value																							|
+	|MISSION_STATUS			|	|perception_healthy; bool			|	|i_perception_status; bool			|	|o_request_aircraft_state; bool		|	|MISSION_STATUS; automatic after 0 seconds; if(mission_data.mission_started == 1){RESUME_MISSION}if(mission_data.mission_started != 1){CHECK_AUTONOMY}; NONE															|
+	|RESUME_MISSION			|	|aircraft_height; double			|	|i_start_supervisor; message_start_supervisor_t	|	|o_set_mission_monitor_status; uint8_t	|	|CHECK_AUTONOMY; automatic after 0 seconds; if(mission_data.autonomy_armed == 1){CHECK_PERCEPTION_SYSTEM}if(mission_data.autonomy_armed != 1){IDLE}; if(mission_data.autonomy_armed == 1){o_request_perception_status.send(true)}if(mission_data.autonomy_armed != 1){NONE}	|
+	|CHECK_AUTONOMY			|															|o_start_mission; bool			|	|CHECK_PERCEPTION_SYSTEM; i_perception_status.received; OUTPUT_PERCEPTION_STATUS; perception_healthy = i_perception_status.value																		|
+	|CHECK_PERCEPTION_SYSTEM	|															|o_update_gcs; message_update_gcs_t	|	|OUTPUT_PERCEPTION_STATUS; automatic after 0 seconds; REQUEST_AIRCRAFT_STATUS; if(perception_healthy == true){o_update_gcs.send("The perceptions system is ready for operation!", 1)}else{o_update_gcs.send("The perceptions system is not operational!", 6)}			|
+	|OUTPUT_PERCEPTION_STATUS	|																					|REQUEST_AIRCRAFT_STATUS; automatic after 0 seconds; CHECK_AIRCRAFT_STATE; o_request_aircraft_state.send(true)																					|
+	|REQUEST_AIRCRAFT_STATE		|																					|CHECK_AIRCRAFT_STATE; i_aircraft_state.received; OUTPUT_TAKEOFF_POSITION; aircraft_height = i_aircraft_state.value.alt_AGL																			|
+	|CHECK_AIRCRAFT_STATE		|																					|OUTPUT_TAKEOFF_POSITION; automatic after 0 seconds; START_MISSION; o_set_mission_monitor_status.send(1) AND if(aircraft_height > 10){o_update_gcs.send("Starting Mission in air!", MAV_SEVERITY_ALERT)}									|
+	|OUTPUT_TAKEOFF_POSITION	|																					|START_MISSION; automatic after 0 seconds; IDLE; o_start_mission.send(true)																									|
+	|START_MISSION			|																					|RESUME_MISSION; automatic after 0 seconds; IDLE; NONE																												|
+																										
+																										
+The initial state of the model is always IDLE.
+These are the structs the model uses:
+
+struct message_aircraft_state_t {
+	double  gps_time;
+	double  lat;
+	double  lon;
+	float	alt_AGL;
+	float   alt_MSL;
+	float   hdg_Deg;
+	double  vel_Kts;
+};
+
+struct message_start_supervisor_t{
+    uint8_t autonomy_armed;
+    uint8_t mission_started;
+    uint32_t mission_number;
+
+};
+
+struct message_update_gcs_t {
+	std::string text;
+	int severity;
+};
+
+Can you please provide me with 3 test cases?
+The input data MUST be in the form:
+Input Data: {Input Port Name{(input time), [input value]}}
+
+The expected outputs MUST be in the form:
+Expected Outputs: {Ouptut Port Name{(output sequence number), [expected output]}}
+
+And finally could you also provide the state transition path in the form of:
+State Transition Path: {initial state name,...., final state name}

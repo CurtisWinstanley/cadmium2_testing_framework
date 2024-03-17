@@ -1,0 +1,68 @@
+This is a tabular description of a DEVS Atomic model:
+
+Atomic Model Name: My_Model
+			
+	|States list:	|	|State Variables:Name; Type		|	|Input Port Names; Type	|	|Output Port Names; Type|	
+	|---------------|	|---------------------------------------|	|-----------------------|	|-----------------------|	
+	|State_0	|	|state_var_1; myStruct_Alpha		|	|i_a; myStruct_Beta	|	|o_v; bool		|	
+	|State_1	|	|state_var_2; bool			|	|i_b; bool		|	|o_w; bool		|	
+	|State_2	|	|state_var_3; double			|	|i_c; myStruct_Alpha	|	|o_x; uint8_t		|	
+	|State_3	|											|o_y; bool		|	
+	|State_4	|											|o_z; myStruct_Gamma	|	
+	|State_5	|																					
+	|State_6	|																					
+	|State_7	|																					
+	|State_8	|																					
+	|State_9	|																					
+																										
+
+			
+|State Transitions Table: Current State;Input;Next State;Action																											|
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|State_0; i_c.received; State_1; state_var_1 = i_c.value																							|
+|State_1; automatic after 0 seconds; if(state_var_1.alpha_elem_2 == 1){State_2}if(state_var_1.alpha_elem_2 == 0){State_3}; NONE															|
+|State_3; automatic after 0 seconds; if(state_var_1.alpha_elem_1 == 1){State_4}if(state_var_1.alpha_elem_1 == 0){State_0}; if(state_var_1.alpha_elem_1 == 1){o_v.send(true)}if(state_var_1.alpha_elem_1 == 0){NONE}	|
+|State_4; i_b.received; State_5; state_var_2 = i_b.value																		|
+|State_5; automatic after 0 seconds; State_6; if(state_var_2 == true){o_z.send("The perceptions system is ready for operation!", 1)}else{o_z.send("The perceptions system is not operational!", 6)}			|
+|State_6; automatic after 0 seconds; State_7; o_w.send(true)																					|
+|State_7; i_a.received; State_8; state_var_3 = i_a.value.beta_elem_4																			|
+|State_8; automatic after 0 seconds; State_9; o_x.send(1) AND if(state_var_3 > 10){o_z.send("Starting Mission in air!", 6)}									|
+|State_9; automatic after 0 seconds; State_0; o_y.send(true)																									|
+|State_2; automatic after 0 seconds; State_0; NONE																												|
+											
+
+																										
+The initial state of the model is always State_0.
+These are the structs the model uses:
+
+struct myStruct_Beta {
+	double  beta_elem_1;
+	double  beta_elem_2;
+	double  beta_elem_3;
+	float	beta_elem_4;
+	float   beta_elem_5;	
+	float   beta_elem_6;
+	double  beta_elem_7;
+};
+
+struct myStruct_Alpha{
+    	uint8_t alpha_elem_1;
+    	uint8_t alpha_elem_2;
+    	uint32_t alpha_elem_3;
+
+};
+
+struct myStruct_Gamma {
+	std::string gamma_elem_1;
+	int gamma_elem_2;
+};
+
+Can you please provide me with 3 test cases?
+The input data MUST be in the form:
+Input Data: {Input Port Name{(input time), [input value]}}
+
+The expected outputs MUST be in the form:
+Expected Outputs: {Ouptut Port Name{(output sequence number), [expected output]}}
+
+And finally could you also provide the state transition path in the form of:
+State Transition Path: {initial state name,...., final state name}

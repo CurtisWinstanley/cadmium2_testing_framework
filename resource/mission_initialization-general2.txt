@@ -1,0 +1,54 @@
+This is a tabular description of a DEVS Atomic model:
+
+Atomic Model Name: My_Model
+			
+	|States list:	|	|State Variables:Name; Type			|	|Input Port Names; Type				|	|Output Port Names; Type		|	|State Transitions List (this list contains every possiable state transition (may not be in order): Current State;Required Event;Next State;Action												|
+	|---------------|	|-----------------------------------------------|	|-----------------------------------------------|	|---------------------------------------|	|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+	|I		|	|var1; myStruct_B				|	|i_aircraft_state; myStruct_A			|	|o_request_perception_status; bool	|	|I; i_start_supervisor.received; MS; mission_data = i_start_supervisor.value																					|
+	|MS		|	|var2; bool					|	|i_perception_status; bool			|	|o_request_aircraft_state; bool		|	|MS; automatic after 0 seconds; if(mission_data.B_elem2 == 1){RM}if(mission_data.B_elem2 != 1){CA}; NONE																	|
+	|RM		|	|aircraft_height; double			|	|i_start_supervisor; myStruct_B			|	|o_set_mission_monitor_status; uint8_t	|	|CA; automatic after 0 seconds; if(mission_data.B_elem1 == 1){CPS}if(mission_data.B_elem1 != 1){I}; if(mission_data.A_elem1 == 1){o_request_perception_status.send(true)}if(mission_data.A_elem1  != 1){NONE}					|
+	|CA		|															|o_start_mission; bool			|	|CPS; i_perception_status.received; OPS; perception_healthy = i_perception_status.value																				|
+	|CPS		|															|o_update_gcs; myStruct_C		|	|OPS; automatic after 0 seconds; RAS; if(perception_healthy == true){o_update_gcs.send("The perceptions system is ready for operation!", 1)}else{o_update_gcs.send("The perceptions system is not operational!", 6)}				|
+	|OPS		|																					|RAS; automatic after 0 seconds; CAS; o_request_aircraft_state.send(true)																					|
+	|RAS		|																					|CAS; i_aircraft_state.received; OTP; aircraft_height = i_aircraft_state.value.A_elem5																				|
+	|CAS		|																					|OTP; automatic after 0 seconds; SM; o_set_mission_monitor_status.send(1) AND if(aircraft_height > 10){o_update_gcs.send("Starting Mission in air!", MAV_SEVERITY_ALERT)}									|
+	|OTP		|																					|SM; automatic after 0 seconds; I; o_start_mission.send(true)																							|
+	|SM		|																					|RM; automatic after 0 seconds; I; NONE																										|
+																										
+																										
+The initial state of the model is always I.
+These are the structs the model uses:
+
+struct myStruct_A {
+	double  A_elem1;
+	double  A_elem2;
+	double  A_elem3;
+	float	A_elem4;
+	float   A_elem5;
+	float   A_elem6;
+	double  A_elem7;
+};
+
+struct myStruct_B{
+    uint8_t B_elem1;
+    uint8_t B_elem2;
+    uint32_t B_elem3;
+
+};
+
+struct myStruct_C {
+	std::string C_elem1;
+	int C_elem2;
+};
+
+Can you please provide me with 3 test cases?
+The input data MUST be in the form:
+Input Data: {Input Port Name{(input time), [input value]}}
+
+The expected outputs MUST be in the form:
+Expected Outputs: {Ouptut Port Name{(output sequence number), [expected output]}}
+
+And finally could you also provide the state transition path in the form of:
+State Transition Path: {initial state name,...., final state name}
+
+Please when making these test cases make NO assumptions so just follow the rules in the table.

@@ -1,0 +1,11 @@
+Above is a description of my state machine in JSON format. Can you please provide me with 3 test cases?
+The input data MUST be in the form:
+Input Data: {Input Port Name{(input time), [input value]}}
+
+The expected outputs MUST be in the form:
+Expected Outputs: {Ouptut Port Name{(output sequence number), [expected output]}}
+
+And finally could you also provide the state transition path in the form of:
+State Transition Path: {initial state name,...., final state name}
+
+Assume that the initial state is always WAIT_A.

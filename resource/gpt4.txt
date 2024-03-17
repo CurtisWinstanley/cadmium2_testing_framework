@@ -1,0 +1,32 @@
+This is a tabular description of a DEVS Atomic model:
+
+Atomic Model Name: Basic Math
+			
+	|States list:	|	|State Variables:Name; Type	|	|Input Port Names; Type	|	|Output Port Names; Type	|	|State Transitions: Current State;Event;Next State;Action			|
+	|---------------|	|-------------------------------|	|-----------------------|	|-------------------------------|	|-------------------------------------------------------------------------------|
+	|WAIT_A		|	|num1; int 			|	|i_a; int		|	|o_x; int			|	|WAIT_A; i_a.received; WAIT_B; num1 = i_a.value					|
+	|WAIT_B		|	|num2; int			|	|i_b; int		|	|o_y; int			|	|WAIT_B; i_b.received; DO_BAR; num2 = i_b.value					|
+	|DO_BAR		|															|DO_BAR; automatic after 10 seconds; DO_FOO; o_x.send(bar(num1, num2))		|
+	|DO_FOO		|															|DO_FOO; automatic after 0 seconds; WAIT_A; o_y.send(foo(num1, num2))		|
+
+These are the functions the model uses:
+
+int bar(int x, int y)
+{
+    return x + y;
+}
+
+int foo(int x, int y)
+{
+    return x * y;
+}
+
+Can you please provide me with 3 test cases?
+The input data MUST be in the form:
+Input Data: {Input Port Name{(input time), [input value]}}
+
+The expected outputs MUST be in the form:
+Expected Outputs: {Ouptut Port Name{(output sequence number), [expected output]}}
+
+And finally could you also provide the state transition path in the form of:
+State Transition Path: {initial state name,...., final state name}

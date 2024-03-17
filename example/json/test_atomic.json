@@ -1,0 +1,35 @@
+
+{
+
+    "state_variables": [
+        {"name": "num1", "type": "int"},
+        {"name": "num2", "type": "int"}
+    ],
+
+    "input_ports": [
+        {"name": "i_a", "type": "int"},
+        {"name": "i_b", "type": "int"}
+    ],
+
+    "output_ports": [
+        {"name": "o_x", "type": "int"},
+        {"name": "o_y", "type": "int"}
+    ],
+
+    "functions used in model": [
+        {"function header": "int bar(int x, int y)", "function body": "return x + y;"},
+        {"function header": "int foo(int x, int y)", "function body": "return x * y;"}
+    ],
+
+    "transitions": [
+      {"currentState": "WAIT_A",     "transition type": "wait for input",               "condition": "i_a.received",    "nextState": "WAIT_B",  "state variable update": "num1 = i_a.value",    "TRANSITION SPECIFIC OUTPUT:": "NO OUTPUT"},
+      {"currentState": "WAIT_B",     "transition type": "wait for input",               "condition": "i_b.received",    "nextState": "DO_BAR",  "state variable update": "num2 = i_b.value",    "TRANSITION SPECIFIC OUTPUT:": "NO OUTPUT"},
+      {"currentState": "DO_BAR",     "transition type": "automatic after 10 seconds",   "condition": "none",            "nextState": "DO_FOO",  "state variable update": "none",                "TRANSITION SPECIFIC OUTPUT:": "o_x.send(do_bar(num1, num2))"},
+      {"currentState": "DO_FOO",     "transition type": "automatic after 0 seconds",    "condition": "none",            "nextState": "WAIT_A",  "state variable update": "none",                "TRANSITION SPECIFIC OUTPUT:": "o_y.send(do_foo(num1, num2))"}
+    ],
+
+    "question": [
+    {   "m": "Above is a description of my state machine in JSON format. Can you please provide me with 5 test cases?\n\nThe input data MUST be in the form:\nInput Data: {Input Port Name{(input time), [input value]}}\n\nIF there are expected outputs, they MUST be in the form:\nExpected Outputs: {Output Port Name{(output sequence number), [expected output]}}\nREMEMBER: Outputs only happen if the transition occurred.\n\nAnd finally could you also provide the state transition path in the form of:\nState Transition Path: {initial state name,...., final state name}\n\nALWAYS Assume that the initial state is always IDLE."}
+    ]
+}
+

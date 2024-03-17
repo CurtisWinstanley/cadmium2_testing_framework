@@ -1,0 +1,47 @@
+
+{
+    "model_struct_types": [
+        {"name": "message_start_supervisor_t", "elements": "uint8_t autonomy_armed // used to indicate that the autonomy system is ready; uint8_t mission_already_started //used to indicate that a mission has ALREADY began; uint32_t mission_number;"},
+        {"name": "message_aircraft_state_t", "elements": "double gps_time; double lat; double lon; float alt_AGL; float alt_MSL; float hdg_Deg; double vel_Kts;"},
+        {"name": "message_update_gcs_t", "elements": "std::string text; int severity;"}
+    ],
+
+    "state_variables": [
+        {"name": "mission_data", "type": "message_start_supervisor_t"},
+        {"name": "perception_healthy", "type": "bool"},
+        {"name": "aircraft_height", "type": "double"}
+    ],
+
+    "input_ports": [
+        {"name": "i_aircraft_state", "type": "message_aircraft_state_t"},
+        {"name": "i_perception_status", "type": "bool"},
+        {"name": "i_start_supervisor", "type": "message_start_supervisor_t"}
+    ],
+
+    "output_ports": [
+        {"name": "o_request_perception_status", "type": "bool"},
+        {"name": "o_request_aircraft_state", "type": "bool"},
+        {"name": "o_set_mission_monitor_status", "type": "uint8_t"},
+        {"name": "o_start_mission", "type": "bool"},
+        {"name": "o_update_gcs", "type": "message_update_gcs_t"}
+    ],
+
+    "transitions": [
+    {"currentState": "IDLE",                      "transition type": "wait for input",                "condition": "i_start_supervisor.received",                 "nextState": "MISSION_STATUS",              "state variable update": "mission_data = i_start_supervisor.value", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "MISSION_STATUS",            "transition type": "automatic after 0 seconds",     "condition": "if(mission_data.mission_already_started == 1)",       "nextState": "RESUME_MISSION",              "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "MISSION_STATUS",            "transition type": "automatic after 0 seconds",     "condition": "if(mission_data.mission_already_started == 0)",       "nextState": "CHECK_AUTONOMY",              "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "RESUME_MISSION",            "transition type": "automatic after 0 seconds",     "condition": "none",                                        "nextState": "IDLE",                        "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "CHECK_AUTONOMY",            "transition type": "automatic after 0 seconds",     "condition": "if(mission_data.autonomy_armed == 1)",        "nextState": "CHECK_PERCEPTION_SYSTEM",     "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "o_request_perception_status.send(true)"},
+    {"currentState": "CHECK_AUTONOMY",            "transition type": "automatic after 0 seconds",     "condition": "if(mission_data.autonomy_armed == 0)",        "nextState": "IDLE",                        "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "CHECK_PERCEPTION_SYSTEM",   "transition type": "wait for input",                "condition": "i_perception_status.received",                "nextState": "OUTPUT_PERCEPTION_STATUS",    "state variable update": "perception_healthy = i_perception_status.value", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "OUTPUT_PERCEPTION_STATUS",  "transition type": "automatic after 0 seconds",     "condition": "none",                                        "nextState": "REQUEST_AIRCRAFT_STATUS",     "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "if(perception_healthy == true){o_update_gcs.send('The perceptions system is ready for operation!', 1)}else{o_update_gcs.send('The perceptions system is not operational!', 6)}"},
+    {"currentState": "REQUEST_AIRCRAFT_STATUS",   "transition type": "automatic after 0 seconds",     "condition": "none",                                        "nextState": "CHECK_AIRCRAFT_STATE",        "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "o_request_aircraft_state.send(true)"},
+    {"currentState": "CHECK_AIRCRAFT_STATE",      "transition type": "wait for input",                "condition": "i_aircraft_state.received",                   "nextState": "OUTPUT_TAKEOFF_POSITION",     "state variable update": "aircraft_height = i_aircraft_state.value.alt_AGL", "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "OUTPUT_TAKEOFF_POSITION",   "transition type": "automatic after 0 seconds",     "condition": "none",                                        "nextState": "START_MISSION",               "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "o_set_mission_monitor_status.send(1) AND IF(aircraft_height > 10){o_update_gcs.send('Starting Mission in air!', 6)}"},
+    {"currentState": "START_MISSION",             "transition type": "automatic after 0 seconds",     "condition": "none",                                        "nextState": "IDLE",                        "state variable update": "none", "TRANSITION SPECIFIC OUTPUT(S):": "o_start_mission.send(true)"}
+    ],
+
+    "question": [
+        {   "m": "Above is a description of my state machine in JSON format. Can you please provide me with 3 test cases?\n\nThe input data MUST be in the form:\nInput Data: {Input_Port_Name{(input time), [input value]}}\n\nIF there are expected outputs, they MUST be in the form:\nExpected Outputs: {Output_Port_Name{(output sequence number), [expected output]}}\nREMEMBER: Outputs only happen if the transition occurred.\n\nAnd finally could you also provide the state transition path in the form of:\nState Transition Path: {initial state name,...., final state name}\n\nALWAYS Assume that the initial state is always IDLE."}
+    ]
+}
