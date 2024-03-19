@@ -146,13 +146,13 @@ test_str = """### Test Case 1: Mission Already Started
 
 
 
-##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium_v2_test\example\test\drivers
-##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium_v2_test\example\atomic_models\Mission_Initialization_c2.hpp
+##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\test\drivers
+##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\atomic_models\Mission_Initialization_c2.hpp
 ##For Testing GUI: atomic_models\Mission_Initialization_c2.hpp
 ##For Testing GUI: Mission_Initialization
 ##For Testing GUI: *No Constructor args*
 ##For Testing GUI: 3
-##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium_v2_test\example\json\mission_init12.json
+##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\json\mission_init12.json
 
 #
 #
@@ -253,7 +253,7 @@ def parse_model_json(model_file):
 
 
 
-##For testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium_v2_test\include\message_structures
+##For testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium_v2_test\example\message_structures
 ##For testing GUI: message_update_gcs_t.hpp;message_aircraft_state_t.hpp;message_start_supervisor_t.hpp
 ##For testing GUI: message_update_gcs_t;message_aircraft_state_t;essage_start_supervisor_t
 ##For testing GUI: message_structures

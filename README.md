@@ -21,3 +21,6 @@ chatgpt to create test cases.
   This is so the driver can find the log files for reading.
 * Be nice to ChatGPT. If it does not generate data to your liking based off of the provided JSON template (see examples for JSON model file examples) then
   it may help to make your state variables or port names more meaningful. It also may help if you are using custom data types for ports or functions in the model, to add small comments after ;'s incase a statement or variable is confusing the AI. 
+
+## User Manual
+

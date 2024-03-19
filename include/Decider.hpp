@@ -20,7 +20,7 @@ using namespace cadmium;
 struct Decider_State {
 	int nExternals, nInternals, nInputs;
 	double clock, sigma;
-	Decider_State(): nInternals(), nExternals(), nInputs(), clock(), sigma(std::numeric_limits<double>::infinity()) {}
+	Decider_State(): nInternals(), nExternals(), nInputs(), clock(), sigma(std::numeric_limits<double>::max()) {}
 };
 
 std::ostream &operator << (std::ostream& os, const Decider_State& x) {
@@ -60,6 +60,14 @@ class Decider: public Atomic<Decider_State> {
 
 		void internalTransition(Decider_State& s) const override {
             s.clock += s.sigma;
+
+			make_output_decision(test_conditions);
+			for (const auto& p : test_paths) {
+				std::string model_name = p.first;
+				std::vector<std::string> path = p.second;
+				make_path_decision(log_file, model_name, path);
+			}
+
 			s.sigma = std::numeric_limits<double>::infinity();
             return;
 		}
@@ -143,18 +151,7 @@ class Decider: public Atomic<Decider_State> {
 			// 		make_path_decision(log_file, model_name, path);
 			// 	}
 			// }
-			s.sigma = std::numeric_limits<double>::infinity(); 
-			return;
-		}
-
-		void execute_test_decision()
-		{
-			make_output_decision(test_conditions);
-			for (const auto& p : test_paths) {
-				std::string model_name = p.first;
-				std::vector<std::string> path = p.second;
-				make_path_decision(log_file, model_name, path);
-			}
+			s.sigma = std::numeric_limits<double>::max(); 
 			return;
 		}
 
@@ -191,6 +188,18 @@ class Decider: public Atomic<Decider_State> {
 		std::map<std::string, std::vector<std::string>> test_paths;
 
 		mutable std::string log_file;
+
+
+		void execute_test_decision()
+		{
+			make_output_decision(test_conditions);
+			for (const auto& p : test_paths) {
+				std::string model_name = p.first;
+				std::vector<std::string> path = p.second;
+				make_path_decision(log_file, model_name, path);
+			}
+			return;
+		}
 
 		/**
 		 * \brief 	Function that decides if a test has passed or not by tracking outputted states in

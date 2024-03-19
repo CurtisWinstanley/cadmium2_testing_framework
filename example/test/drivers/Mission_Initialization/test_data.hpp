@@ -26,19 +26,19 @@ std::map<int, std::map<std::string, std::vector<std::tuple<double, VariantType>>
     //Test Case: 2 Input Data ---------------------------------------------------------
     std::map<std::string, std::vector<std::tuple<double, VariantType>>> tc2;
     std::vector<std::tuple<double, VariantType>> i_start_supervisor_2; 
-    i_start_supervisor_2.push_back(std::make_tuple(1, message_start_supervisor_t(0, 0, 123)));
+    i_start_supervisor_2.push_back(std::make_tuple(1, message_start_supervisor_t(0, 0, 456)));
     tc2["i_start_supervisor"] = i_start_supervisor_2;
 
     //Test Case: 3 Input Data ---------------------------------------------------------
     std::map<std::string, std::vector<std::tuple<double, VariantType>>> tc3;
     std::vector<std::tuple<double, VariantType>> i_aircraft_state_3; 
-    i_aircraft_state_3.push_back(std::make_tuple(3, message_aircraft_state_t(123456.789, 34.5678, 123.4567, 15.0, 1015.0, 90.0, 100.0)));
+    i_aircraft_state_3.push_back(std::make_tuple(3, message_aircraft_state_t(123456.789, 34.5678, 123.4567, 15.0, 1015.0, 90.0, 120.0)));
     tc3["i_aircraft_state"] = i_aircraft_state_3;
     std::vector<std::tuple<double, VariantType>> i_perception_status_3; 
     i_perception_status_3.push_back(std::make_tuple(2, bool(1)));
     tc3["i_perception_status"] = i_perception_status_3;
     std::vector<std::tuple<double, VariantType>> i_start_supervisor_3; 
-    i_start_supervisor_3.push_back(std::make_tuple(1, message_start_supervisor_t(1, 0, 123)));
+    i_start_supervisor_3.push_back(std::make_tuple(1, message_start_supervisor_t(1, 0, 789)));
     tc3["i_start_supervisor"] = i_start_supervisor_3;
 
     std::map<int, std::map<std::string, std::vector<std::tuple<double, VariantType>>>> test_cases;
@@ -72,7 +72,7 @@ std::map<int, std::map<std::string, std::vector<std::tuple<int, VariantType>>>> 
     o_set_mission_monitor_status_3_eo.push_back(std::make_tuple(4, uint8_t(1)));
     eo3["o_set_mission_monitor_status"] = o_set_mission_monitor_status_3_eo;
     std::vector<std::tuple<int, VariantType>> o_start_mission_3_eo; 
-    o_start_mission_3_eo.push_back(std::make_tuple(6, int(123)));
+    o_start_mission_3_eo.push_back(std::make_tuple(6, int(789)));
     eo3["o_start_mission"] = o_start_mission_3_eo;
     std::vector<std::tuple<int, VariantType>> o_update_gcs_3_eo; 
     o_update_gcs_3_eo.push_back(std::make_tuple(2, message_update_gcs_t("The perceptions system is ready for operation!", 1)));
