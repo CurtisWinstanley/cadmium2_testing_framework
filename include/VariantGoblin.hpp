@@ -15,11 +15,13 @@
 #include "message_structures/message_update_gcs_t.hpp"
 #include "message_structures/message_aircraft_state_t.hpp"
 #include "message_structures/message_start_supervisor_t.hpp"
+#include "message_structures/message_item_selection_t.hpp"
 
 //This variant holds every type that the ports can output
 using VariantType = std::variant<int, double, bool, float, std::string, uint8_t, uint16_t, uint32_t
 , message_update_gcs_t
 , message_aircraft_state_t
 , message_start_supervisor_t
+, item_selection_t
       >;
 #endif;

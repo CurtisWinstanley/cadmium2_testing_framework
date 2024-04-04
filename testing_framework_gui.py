@@ -147,12 +147,12 @@ test_str = """### Test Case 1: Mission Already Started
 
 
 ##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\test\drivers
-##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\atomic_models\Mission_Initialization_c2.hpp
-##For Testing GUI: atomic_models\Mission_Initialization_c2.hpp
-##For Testing GUI: Mission_Initialization
+##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\atomic_models\Vending_Machine.hpp
+##For Testing GUI: atomic_models\Vending_Machine.hpp
+##For Testing GUI: Vending_Machine
 ##For Testing GUI: *No Constructor args*
 ##For Testing GUI: 3
-##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\json\mission_init12.json
+##For Testing GUI: C:\Users\curti\repositories\_Fall2023\cadmium2_testing_framework\example\json\vending_machine.json
 
 #
 #

@@ -1,0 +1,30 @@
+
+{
+    "model struct_types": [
+        {"name": "", "elements": ""}
+    ],
+    "state variables": [
+        {"name": "", "type": ""}
+    ],
+
+    "input ports": [
+        {"name": "", "type": ""}
+    ],
+
+    "output ports": [
+        {"name": "", "type": "" , "description": ""}
+    ],
+
+    "functions used in model": [
+        {"function header": "", "function body": "", "description": ""}
+    ],
+
+    "transitions": [
+    {"currentState": "",      "transition type": "wait for input",                "condition": "*.received",     "nextState": "",    "state variable update": "",      "TRANSITION SPECIFIC OUTPUT(S):": ""},
+    {"currentState": "",      "transition type": "automatic after * seconds",     "condition": "",               "nextState": "",    "state variable update": "",      "TRANSITION SPECIFIC OUTPUT(S):": ""}
+    ],
+
+    "question": [
+        {   "m": "Above is a description of my state machine in JSON format. Can you please provide me with * test cases?\n\nThe input data MUST be in the form:\nInput Data: {Input_Port_Name{(input time), [input value]}}\n\nIF there are expected outputs, they MUST be in the form:\nExpected Outputs: {Output_Port_Name{(output sequence), [expected output]}}\nREMEMBER: Outputs only happen if the transition occurred.\n\nAnd finally could you also provide the state transition path in the form of:\nState Transition Path: {initial state name,...., final state name}\n\nALWAYS Assume that the initial state is *."}
+    ]
+}

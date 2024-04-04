@@ -1,0 +1,37 @@
+
+{
+    "model struct types": [
+        {"name": "item_selection_t", "elements": "float price; //represents price of an item; int item_id; //represents the id of an item;"}
+    ],
+    "state variables": [
+        {"name": "selected_beverage", "type": "item_selection_t"},
+        {"name": "current_inserted_amount", "type": "float"}
+    ],
+
+    "input ports": [
+        {"name": "i_beverage_selection", "type": "item_selection_t"},
+        {"name": "i_money", "type": "float"}
+    ],
+
+    "output ports": [
+        {"name": "o_change", "type": "float" , "description": "port to ouput the calculated change which can be equal to OR greater than 0"},
+        {"name": "o_dispense_id", "type": "int", "description": "port to send the id of the beverage to dispense"}
+    ],
+
+    "functions used in model": [
+        {"function header": "float calc_change(float x, float y)", "function body": "return x - y;", "description": "returns amount of change to be output on the o_change port"}
+    ],
+
+    "transitions": [
+    {"currentState": "WAIT_FOR_SELECTION",      "transition type": "wait for input",                "condition": "i_beverage_selection.received",                               "nextState": "COLLECT_CURRENCY",    "state variable update": "selected_beverage = i_beverage_selection.value",      "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "COLLECT_CURRENCY",        "transition type": "wait for input",                "condition": "i_money.received",                                            "nextState": "CHECK_AMOUNT",        "state variable update": "current_inserted_amount += i_money.value",            "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "CHECK_AMOUNT",            "transition type": "automatic after 0 seconds",     "condition": "if(current_inserted_amount < selected_beverage.price)",       "nextState": "COLLECT_CURRENCY",    "state variable update": "none",                                                "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "CHECK_AMOUNT",            "transition type": "automatic after 0 seconds",     "condition": "if(current_inserted_amount >= selected_beverage.price)",      "nextState": "OUTPUT_CHANGE",       "state variable update": "none",                                                "TRANSITION SPECIFIC OUTPUT(S):": "NO OUTPUT"},
+    {"currentState": "OUTPUT_CHANGE",           "transition type": "automatic after 10 seconds",    "condition": "none",                                                        "nextState": "DISPENSE_BEVERAGE",   "state variable update": "none",                                                "TRANSITION SPECIFIC OUTPUT(S):": "o_change.send(calc_change(current_inserted_amount, selected_beverage.price))"},
+    {"currentState": "DISPENSE_BEVERAGE",       "transition type": "automatic after 5 seconds",     "condition": "none",                                                        "nextState": "WAIT_FOR_SELECTION",  "state variable update": "current_inserted_amount = 0",                         "TRANSITION SPECIFIC OUTPUT(S):": "o_dispense_id.send(selected_beverage.item_id)"}
+    ],
+
+    "question": [
+        {   "m": "Above is a description of my state machine in JSON format. Can you please provide me with 3 test cases?\n\nThe input data MUST be in the form:\nInput Data: {Input_Port_Name{(input time), [input value]}}\n\nIF there are expected outputs, they MUST be in the form:\nExpected Outputs: {Output_Port_Name{(output sequence), [expected output]}}\nREMEMBER: Outputs only happen if the transition occurred.\n\nAnd finally could you also provide the state transition path in the form of:\nState Transition Path: {initial state name,...., final state name}\n\nALWAYS Assume that the initial state is WAIT_FOR_SELECTION."}
+    ]
+}
