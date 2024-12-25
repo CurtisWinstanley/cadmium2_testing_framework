@@ -8,10 +8,8 @@
 #include <vector>
 #include <variant>
 #include <cassert>
+#include <filesystem>
 
-#include "cadmium/core/modeling/port.hpp"
-
-#include "VariantGoblin.hpp"
 
 struct comparator_report_struct{
     int condition_entry;
@@ -27,69 +25,69 @@ std::ostream& operator<<(std::ostream& out, const comparator_report_struct& s) {
     return out;
 }
 
-enum Execution_Location{INTERNAL_TRANSITION, OUTPUT};
+// enum Execution_Location{INTERNAL_TRANSITION, OUTPUT};
 
-template <typename... Types>
-void generate(const std::map<int, std::pair<std::string, std::variant<Types...>>>& generated_values,
-            const std::vector<float> output_times,
-            const std::vector<std::shared_ptr<cadmium::PortInterface>>& model_ports,
-            Execution_Location location,
-            int* transition_counter,
-            double* sigma_ptr,
-            double clock) 
-{
-    if (location == Execution_Location::INTERNAL_TRANSITION) {
-        handle_internal(output_times, sigma_ptr, transition_counter, clock);
-    }
+// template <typename... Types>
+// void generate(const std::map<int, std::pair<std::string, std::variant<Types...>>>& generated_values,
+//             const std::vector<float> output_times,
+//             const std::vector<std::shared_ptr<cadmium::PortInterface>>& model_ports,
+//             Execution_Location location,
+//             int* transition_counter,
+//             double* sigma_ptr,
+//             double clock) 
+// {
+//     if (location == Execution_Location::INTERNAL_TRANSITION) {
+//         handle_internal(output_times, sigma_ptr, transition_counter, clock);
+//     }
 
-    if (location == Execution_Location::OUTPUT) 
-    {
-        handle_output(generated_values, model_ports, transition_counter);
-    }
-}
-
-
-template <typename T>
-void handlePortType(const std::shared_ptr<cadmium::PortInterface>& port, const T& value) 
-{
-    if (auto typedPort = std::dynamic_pointer_cast<cadmium::_Port<T>>(port)) {
-        // Do something specific for ports of type _Port<T>
-        typedPort->addMessage(value);
-    }
-}
+//     if (location == Execution_Location::OUTPUT) 
+//     {
+//         handle_output(generated_values, model_ports, transition_counter);
+//     }
+// }
 
 
+// template <typename T>
+// void handlePortType(const std::shared_ptr<cadmium::PortInterface>& port, const T& value) 
+// {
+//     if (auto typedPort = std::dynamic_pointer_cast<cadmium::_Port<T>>(port)) {
+//         // Do something specific for ports of type _Port<T>
+//         typedPort->addMessage(value);
+//     }
+// }
 
-void handle_internal(const std::vector<float>& output_times, double* sigma_ptr, int* transition_counter, double clock)
-{
-    if(*transition_counter ==  std::size(output_times))
-    {
-        *sigma_ptr = std::numeric_limits<double>::infinity();
-        return;
-    }
-    *sigma_ptr = output_times[*transition_counter] - clock;
-    //*sigma_ptr = output_times[*transition_counter];
-    *transition_counter = *transition_counter + 1;
-    return;
-}
 
-template <typename... Types>
-void handle_output(const std::map<int, std::pair<std::string, std::variant<Types...>>>& generated_values, 
-            const std::vector<std::shared_ptr<cadmium::PortInterface>>& model_ports,
-            int* transition_counter)
-{
-    for (const auto& port : model_ports) 
-    {
-        auto it = generated_values.find(*transition_counter);
-        std::string p = it->second.first;
-        const auto value = it->second.second;
-        if (port->getId() == p) {
-            std::visit([&](const auto& typedValue) {
-                handlePortType(port, typedValue);
-            }, value);
-        }
-    }
-}
+
+// void handle_internal(const std::vector<float>& output_times, double* sigma_ptr, int* transition_counter, double clock)
+// {
+//     if(*transition_counter ==  std::size(output_times))
+//     {
+//         *sigma_ptr = std::numeric_limits<double>::infinity();
+//         return;
+//     }
+//     *sigma_ptr = output_times[*transition_counter] - clock;
+//     //*sigma_ptr = output_times[*transition_counter];
+//     *transition_counter = *transition_counter + 1;
+//     return;
+// }
+
+// template <typename... Types>
+// void handle_output(const std::map<int, std::pair<std::string, std::variant<Types...>>>& generated_values, 
+//             const std::vector<std::shared_ptr<cadmium::PortInterface>>& model_ports,
+//             int* transition_counter)
+// {
+//     for (const auto& port : model_ports) 
+//     {
+//         auto it = generated_values.find(*transition_counter);
+//         std::string p = it->second.first;
+//         const auto value = it->second.second;
+//         if (port->getId() == p) {
+//             std::visit([&](const auto& typedValue) {
+//                 handlePortType(port, typedValue);
+//             }, value);
+//         }
+//     }
+// }
 
 /**
  * @brief Function that organizes the test cases and provides the generator with the test data.
@@ -103,7 +101,7 @@ void handle_output(const std::map<int, std::pair<std::string, std::variant<Types
  * 
  * @return The data and corrosponding times for each peice of data organized in a vector
  */
-template<typename T>
+template<typename T, typename VariantType>
 std::vector<std::tuple<double, T>> set_test_data(int test_enum, std::string port,
                     std::map<int, std::map<std::string, std::vector<std::tuple<double, VariantType>>>> test_data)
 {
@@ -143,7 +141,7 @@ std::vector<std::tuple<double, T>> set_test_data(int test_enum, std::string port
  * 
  * @return The expected oracle data for the specific port specified as a parameter
  */
-template<typename TYPE>
+template<typename TYPE, typename VariantType>
 std::vector<std::tuple<int, TYPE>> set_oracle_data(int test_enum, std::string port,
                     std::map<int, std::map<std::string, std::vector<std::tuple<int, VariantType>>>> comparator_data)
 {
@@ -202,8 +200,8 @@ std::map<std::string, std::vector<std::string>> set_path_data(int test_enum,
     return paths;
 }
 
-
-int get_number_of_conditions(const std::map<std::string, std::vector<std::tuple<int, VariantType>>>& myMap) {
+template <typename MyVariant>
+int get_number_of_conditions(const std::map<std::string, std::vector<std::tuple<int, MyVariant>>>& myMap) {
     int num = 0;
 
     for (const auto& pair : myMap) {
@@ -213,5 +211,24 @@ int get_number_of_conditions(const std::map<std::string, std::vector<std::tuple<
     return num;
 }
 
+
+
+// Function that takes cpp_file_path as an argument
+std::string get_log_file_dir(const std::filesystem::path& cpp_file_path, std::string test_name) {
+    // Extract the directory containing the given file
+    std::filesystem::path dir_path = cpp_file_path.parent_path();
+
+    // Append "simulation_results" to the directory path
+    std::filesystem::path log_file_dir = dir_path / "simulation_results";
+
+    // Create the directory if it doesn't exist
+    std::filesystem::create_directories(log_file_dir);
+
+    // Construct the full path of the log file
+    std::string log_file_name = test_name + ".csv";
+    std::filesystem::path log_file_path = log_file_dir / log_file_name;
+
+    return log_file_path.string();
+}
 
 #endif //TD_HELPERS_HPP

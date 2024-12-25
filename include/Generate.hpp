@@ -1,7 +1,7 @@
 #ifndef GENERATE_HPP
 #define GENERATE_HPP
 
-#include <cadmium/core/modeling/atomic.hpp>
+#include <cadmium/modeling/devs/atomic.hpp>
 
 
 #include <iostream>

@@ -1,7 +1,7 @@
 #ifndef DECIDER_HPP
 #define DECIDER_HPP
 
-#include <cadmium/core/modeling/atomic.hpp>
+#include <cadmium/modeling/devs/atomic.hpp>
 #include "td_helpers.hpp"
 
 #include <iostream>
@@ -164,6 +164,12 @@ class Decider: public Atomic<Decider_State> {
 		 */
 		void make_path_decision(std::string log_file, std::string model_name, std::vector<std::string> test_path) const
 		{
+			// Make sure the user added states to check, if not, return
+			if(test_path.size() == 0)
+			{
+				std::cout<< model_name << "[WARNING] Since state transition path was provided, no path decision could be made."<<std::endl;
+				return;
+			}
 
 			//now check that the test path is correct
 			std::ifstream inputFile(log_file);
@@ -181,7 +187,7 @@ class Decider: public Atomic<Decider_State> {
 			std::string next_tracked_state = test_path[current_state + 1];
 			bool test_path_success = true;
 			while (std::getline(inputFile, line)) {
-				if(line.find(model_name) != std::string::npos && line.find("state:") != std::string::npos) 
+				if(line.find(model_name) != std::string::npos && line.find("~:state:~") != std::string::npos) 
 				{
 					if((line.find(tracked_state) != std::string::npos) || (line.find(next_tracked_state) != std::string::npos))
 					{ 
@@ -219,13 +225,13 @@ class Decider: public Atomic<Decider_State> {
 			if(test_path_success)
 			{
 				std::cout << std:: endl;
-				std::cout<< model_name <<" EXPECTED PATHS PASSED"<<std::endl;
+				std::cout<< model_name <<"[INFO] Expected paths succeeded"<<std::endl;
 				std::cout << std:: endl;
 			}
 			else
 			{
 				std::cout << std:: endl;
-				std::cout<< model_name << " EXPECTED PATHS FAILED"<<std::endl;
+				std::cout<< model_name << "[INFO] Expected paths succeeded"<<std::endl;
 				std::cout << std:: endl;
 			}
 		}

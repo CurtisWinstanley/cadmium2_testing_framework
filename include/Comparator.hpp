@@ -1,8 +1,7 @@
 #ifndef COMPARATOR_HPP
 #define COMPARATOR_HPP
 
-#include <cadmium/core/modeling/atomic.hpp>
-
+#include <cadmium/modeling/devs/atomic.hpp>
 
 #include <iostream>
 // C++ Standard Library Headers

@@ -113,6 +113,22 @@ std::map<int, std::map<std::string, std::vector<std::string>>> get_path_data()
     path_data[3] = test_paths_tc3;
     return path_data;
 }
+
+
+
+    //---------------------------------------------------------
+    //Constructor Args   ---------------------------------------------------------
+    //---------------------------------------------------------
+std::map<int, std::vector<VariantType>> get_constructor_data()
+{
+    std::vector<VariantType> Vending_Machine_ca_1 = {"stuff", 99};
+    std::map<int, std::vector<VariantType>> con_args_data;
+    con_args_data[1] = Vending_Machine_ca_1;
+    return con_args_data;
+
+}
+
+
 int get_test_set_size()
 {
     return 3;
